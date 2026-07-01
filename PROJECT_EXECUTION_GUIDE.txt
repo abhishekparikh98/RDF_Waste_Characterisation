@@ -1,0 +1,157 @@
+MULTI-MODAL WASTE CHARACTERISATION PROJECT
+Execution Guide
+
+Project purpose:
+This project classifies waste images, predicts RDF suitability from the predicted waste type, and provides a Flask demo for upload-based inference. It is meant to support academic analysis of waste characterisation and RDF (Refuse-Derived Fuel) suitability.
+
+What each part is for:
+1. Data preprocessing
+   - Cleans and splits the TrashNet dataset into train/validation/test folders.
+   - Resizes and normalizes images for model training.
+
+2. Baseline CNN
+   - A simple TensorFlow/Keras image classifier.
+   - Used as the from-scratch reference model.
+
+3. MobileNetV2
+   - Transfer learning model for better performance on limited image data.
+
+4. ResNet50
+   - Deeper transfer learning model for comparison against CNN and MobileNetV2.
+
+5. RDF Random Forest
+   - Predicts whether a waste material is suitable for RDF using structured material features.
+
+6. Multimodal inference
+   - Connects image classification to RDF prediction.
+   - Flow: Image -> Waste Class -> Material Features -> RDF Suitability
+
+7. Flask web app
+   - Simple upload interface to test the pipeline in a browser.
+
+REQUIRED INPUT FOLDERS / FILES
+- data/processed/train
+- data/processed/validation
+- data/processed/test
+- models/cnn_baseline_best.h5
+- models/mobilenetv2_best.h5
+- models/resnet50_best.h5
+- models/rdf_random_forest_pipeline.joblib
+
+If some model files do not exist yet, run the training scripts below first.
+
+STEP-BY-STEP EXECUTION
+
+STEP 1: Open the project folder
+From PowerShell:
+cd "D:\University\Msc Project"
+
+STEP 2: Install dependencies
+Use your Python environment and run:
+pip install -r requirements.txt
+
+This installs TensorFlow, scikit-learn, Flask, pandas, numpy, Pillow, matplotlib, and the other tools used by the project.
+
+STEP 3: Prepare the TrashNet dataset
+If the processed dataset already exists in data/processed/, you can skip this.
+
+Otherwise run:
+python scripts\preprocess_dataset.py
+
+What this does:
+- validates images
+- splits the dataset into train/validation/test
+- saves processed images into data/processed/
+
+STEP 4: Train the baseline CNN
+Run:
+python scripts\train_cnn.py
+
+What it does:
+- loads images from data/processed/
+- trains the baseline CNN
+- saves the best model in models/
+- generates accuracy/loss plots
+- saves evaluation metrics and report files in results/ and reports/
+
+STEP 5: Train and compare MobileNetV2
+Run:
+python scripts\compare_cnn_mobilenetv2.py
+
+What it does:
+- trains the baseline CNN and MobileNetV2
+- evaluates both models on the same test split
+- generates comparison graphs and reports
+
+STEP 6: Train RDF suitability model
+Run:
+python scripts\train_rdf_rf.py
+
+What it does:
+- generates or loads the RDF tabular dataset
+- preprocesses structured material features
+- trains a Random Forest RDF suitability model
+- saves the trained pipeline in models/
+- generates feature importance plots, confusion matrix, metrics, and report files
+
+STEP 7: Train and compare ResNet50
+Run:
+python scripts\compare_cnn_mobilenetv2.py
+
+Important note:
+This current comparison script includes Baseline CNN, MobileNetV2, and ResNet50 evaluation logic in the latest version of the project. If you want the three-model comparison, use the latest script version in the repository.
+
+STEP 8: Run multimodal inference from the command line
+Run:
+python scripts\run_multimodal_inference.py --image "PATH_TO_IMAGE"
+
+Example:
+python scripts\run_multimodal_inference.py --image "D:\University\Msc Project\sample.jpg"
+
+What it does:
+- predicts the waste class from the image
+- maps the class to RDF-related material features
+- predicts RDF suitability
+- prints the result as JSON
+
+STEP 9: Run the Flask web application
+Run:
+python app.py
+
+Then open the local address shown in the terminal, usually:
+http://127.0.0.1:5000
+
+What it does:
+- lets you upload a waste image
+- shows the predicted waste class
+- shows confidence score
+- shows RDF suitability prediction
+
+OUTPUT LOCATIONS
+- models/ : saved trained models
+- results/ : plots, confusion matrices, reports, evaluation outputs
+- reports/ : markdown evaluation documents
+
+HOW TO CHECK IF EVERYTHING IS IMPLEMENTED CORRECTLY
+1. Verify the processed dataset folders exist.
+2. Verify model files exist in models/.
+3. Verify result plots and reports exist in results/ and reports/.
+4. Run the multimodal CLI inference on a sample image.
+5. Run the Flask app and upload an image.
+6. Confirm the predicted class and RDF result appear without errors.
+
+COMMON ISSUES
+- Missing model files: train the relevant model script first.
+- Missing processed dataset: run preprocessing first.
+- Flask app errors: ensure the model files exist and dependencies are installed.
+- Wrong image preprocessing: use the latest inference module and matching model path.
+
+PROJECT FLOW SUMMARY
+1. Preprocess dataset
+2. Train baseline CNN
+3. Train transfer learning models
+4. Train RDF Random Forest
+5. Run multimodal inference
+6. Test in Flask UI
+
+END OF GUIDE

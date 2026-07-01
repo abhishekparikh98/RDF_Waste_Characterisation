@@ -209,3 +209,35 @@ class TrainingHistoryVisualizer:
             fig_loss.savefig(f"{save_dir}/{loss_name}", dpi=dpi, bbox_inches='tight')
         
         return fig_acc, fig_loss
+
+
+class TabularModelVisualizer:
+    """Visualize tabular model explainability outputs."""
+
+    @staticmethod
+    def plot_feature_importance(
+        importances: np.ndarray,
+        feature_names: List[str],
+        title: str = "Feature Importance",
+        save_path: str = None,
+        figsize: Tuple[int, int] = (10, 6),
+        dpi: int = 300
+    ) -> plt.Figure:
+        """Plot sorted feature importance values."""
+        indices = np.argsort(importances)[::-1]
+        sorted_importances = importances[indices]
+        sorted_names = [feature_names[i] for i in indices]
+
+        fig, ax = plt.subplots(figsize=figsize)
+        ax.bar(range(len(sorted_importances)), sorted_importances, color="steelblue")
+        ax.set_xticks(range(len(sorted_names)))
+        ax.set_xticklabels(sorted_names, rotation=45, ha="right")
+        ax.set_ylabel("Importance")
+        ax.set_title(title)
+        ax.grid(axis="y", alpha=0.25)
+        plt.tight_layout()
+
+        if save_path:
+            fig.savefig(save_path, dpi=dpi, bbox_inches="tight")
+
+        return fig

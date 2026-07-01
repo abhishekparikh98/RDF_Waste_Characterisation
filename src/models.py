@@ -9,6 +9,7 @@ from tensorflow import keras
 from tensorflow.keras import Sequential, layers
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications import ResNet50
+from sklearn.ensemble import RandomForestClassifier
 
 
 class BaselineCNN(Sequential):
@@ -234,3 +235,36 @@ def build_resnet50(
     model.add(layers.Dense(num_classes, activation="softmax", name="output"))
 
     return model
+
+
+def build_rdf_random_forest(
+    n_estimators: int = 300,
+    max_depth: int | None = None,
+    min_samples_split: int = 2,
+    min_samples_leaf: int = 1,
+    random_state: int = 42,
+    class_weight: str | None = "balanced_subsample"
+) -> RandomForestClassifier:
+    """
+    Build a Random Forest classifier for RDF suitability prediction.
+
+    Args:
+        n_estimators: Number of trees in the forest
+        max_depth: Maximum tree depth
+        min_samples_split: Minimum samples required to split a node
+        min_samples_leaf: Minimum samples required at a leaf node
+        random_state: Reproducibility seed
+        class_weight: Class balancing strategy
+
+    Returns:
+        Configured RandomForestClassifier instance
+    """
+    return RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        min_samples_split=min_samples_split,
+        min_samples_leaf=min_samples_leaf,
+        random_state=random_state,
+        class_weight=class_weight,
+        n_jobs=-1,
+    )

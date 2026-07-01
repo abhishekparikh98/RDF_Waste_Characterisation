@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Waste RDF Analytics</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">Academic Prototype</p>
+      <h1>Waste Image Classification and RDF Suitability</h1>
+      <p class="subtitle">Upload a waste image to predict its class and estimate RDF suitability.</p>
+    </section>
+
+    <section class="card">
+      <h2>Upload Waste Image</h2>
+      <form method="post" enctype="multipart/form-data" class="upload-form">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Analyse Image</button>
+      </form>
+
+      {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+      {% endif %}
+    </section>
+
+    {% if preview or result %}
+    <section class="grid">
+      {% if preview %}
+      <article class="card">
+        <h2>Uploaded Image</h2>
+        <img src="{{ preview }}" alt="Uploaded waste image" class="preview">
+      </article>
+      {% endif %}
+
+      {% if result %}
+      <article class="card">
+        <h2>Prediction Summary</h2>
+        <dl class="metrics">
+          <div>
+            <dt>Predicted Waste Class</dt>
+            <dd>{{ result.predicted_class }}</dd>
+          </div>
+          <div>
+            <dt>Confidence Score</dt>
+            <dd>{{ "%.2f"|format(result.class_confidence * 100) }}%</dd>
+          </div>
+          <div>
+            <dt>RDF Suitability</dt>
+            <dd>{{ result.rdf_label }}</dd>
+          </div>
+          <div>
+            <dt>RDF Probability</dt>
+            <dd>{{ "%.2f"|format(result.rdf_probability * 100) }}%</dd>
+          </div>
+        </dl>
+      </article>
+      {% endif %}
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>

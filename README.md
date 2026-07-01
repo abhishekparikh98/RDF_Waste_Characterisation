@@ -72,7 +72,15 @@ pip install -r requirements.txt
 
 ## Usage
 
-(To be populated during project development)
+### Flask web app
+
+Run the academic inference interface:
+
+```bash
+python app.py
+```
+
+It accepts a waste image upload and displays the predicted waste class, confidence score, and RDF suitability prediction.
 
 ## Project Timeline
 

@@ -2,11 +2,15 @@
 Training utilities and callbacks for model training
 """
 
-from typing import Tuple, Optional, Dict
+from typing import Tuple, Optional, Dict, Any
 import logging
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.pipeline import Pipeline
+
+from src.models import build_rdf_random_forest
 
 
 logger = logging.getLogger(__name__)
@@ -212,3 +216,59 @@ def prepare_dataset(
     
     logger.info("Dataset prepared with preprocessing and prefetching")
     return dataset
+
+
+def train_rdf_random_forest(
+    X_train: Any,
+    y_train: Any,
+    preprocessor: Any,
+    param_grid: Dict[str, list] | None = None,
+    cv_folds: int = 5,
+    scoring: str = "f1_weighted",
+    n_jobs: int = -1,
+    verbose: int = 1,
+) -> GridSearchCV:
+    """
+    Train a Random Forest classifier for RDF suitability prediction.
+
+    Args:
+        X_train: Training feature matrix
+        y_train: Training labels
+        preprocessor: Fitted or unfitted sklearn preprocessing pipeline
+        param_grid: Grid search parameter combinations
+        cv_folds: Number of cross-validation folds
+        scoring: Scoring metric for model selection
+        n_jobs: Parallel jobs for grid search
+        verbose: Grid search verbosity
+
+    Returns:
+        Fitted GridSearchCV instance
+    """
+    if param_grid is None:
+        param_grid = {
+            "classifier__n_estimators": [100, 200, 300],
+            "classifier__max_depth": [10, 20, 30, None],
+            "classifier__min_samples_split": [2, 5, 10],
+            "classifier__min_samples_leaf": [1, 2, 4],
+        }
+
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("classifier", build_rdf_random_forest()),
+        ]
+    )
+
+    search = GridSearchCV(
+        estimator=pipeline,
+        param_grid=param_grid,
+        cv=StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=42),
+        scoring=scoring,
+        n_jobs=n_jobs,
+        verbose=verbose,
+        refit=True,
+    )
+    search.fit(X_train, y_train)
+
+    logger.info("Random Forest training complete; best score %.4f", search.best_score_)
+    return search
