@@ -1,0 +1,48 @@
+PART D – Budget Estimation & Financial Strategy (SPEAK THIS)
+
+“Part D focuses on the budget estimation and
+ financial strategy for the complete IT modernization
+ of the City Health Clinic.”
+
+“The total capital expenditure for this
+ project is £24,860, which covers networking equipment, 
+servers, installation, and contingency planning.”
+
+“The Cisco 2911 router, costing £1,050, is used as
+ the core gateway and inter-VLAN router to manage 
+secure communication between departments.”
+
+“Five Cisco 2960-X managed switches, costing £4,750,
+ are used to support the distribution and access layers of the network.”
+
+“Two wireless access points, costing £760, are deployed
+ to support mobility in emergency and outpatient departments.”
+
+“The most significant cost is the PACS imaging server,
+ priced at £15,500, which is required for storing and
+ processing high-resolution radiology images using the DICOM standard.”
+
+“Additional costs include Cat6 cabling and manpower, 
+totalling £2,800, to support installation across three floors.”
+
+“A 15% contingency buffer of £1,162 is included
+ to handle unexpected costs or price fluctuations.”
+
+“To reduce expenses, the project uses certified refurbished equipment,
+ resulting in approximately 30% cost savings without compromising reliability.”
+
+“The implementation is phased, with critical clinical systems
+ prioritised first, ensuring minimal disruption to hospital operations.”
+
+“Overall, this financial strategy delivers a cost-effective, scalable,
+ and future-ready infrastructure that supports patient safety and operational efficiency.”
+
+
+
+2 Budget Withdrawal Contingency
+In the event the issues of budget constraints occur, 
+a Phased Implementation Strategy will be implemented.
+•	Phase 1 (Critical): Deployment of the Core Router and Radiology Server
+         to meet the regulatory standards and diagnostic imaging needs.
+•	Phase 2 (Deferred): The work on delivery administration and network
+        outpatient will be postponed until further funding can realize itself.

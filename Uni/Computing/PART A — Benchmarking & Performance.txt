@@ -1,0 +1,314 @@
+PART A — Benchmarking & Performance Analysis
+
+This part is about checking device performance, comparing them, showing graphs, and making decisions.
+
+1. Benchmark your own laptop
+
+Install Novabench → run test → save the results.
+
+You will get numbers for:
+
+CPU score
+
+RAM score
+
+GPU score
+
+Disk read/write speed
+
+These numbers become your “reference”.
+
+2. Research specs for all listed devices
+
+For each device:
+
+CPU model + performance score (Geekbench/Novabench scores)
+
+RAM: size & speed
+
+GPU: integrated or dedicated
+
+Storage speed: SSD/HDD (MB/s)
+
+You can use official sites, reviews, or benchmark databases.
+
+Devices to research:
+
+Lenovo Yoga 7
+
+ASUS ZenBook Duo
+
+MacBook Pro
+
+MSI 9th Gen
+
+HP Envy 7th Gen
+
+Lenovo Ideapad
+
+ASUS ZenBook 14 (x2)
+
+HP Envy 11th Gen
+
+Microsoft Surface Pro
+
+3. Simulate a CPU task
+
+Example:
+
+Task requires 1 million cycles
+
+Use CPU frequency to estimate execution time
+Formula (simple):
+
+Time = cycles / CPU clock speed
+
+
+You show:
+
+Fastest device
+
+Slowest device
+
+How performance changes
+
+4. Create graphs
+
+At least:
+
+CPU comparison bar graph
+
+RAM size comparison
+
+Disk speed comparison
+
+(Make them clean and readable.)
+
+5. Decision Making
+
+Write which devices the clinic should keep or replace, based on:
+
+Slow CPU
+
+Low RAM
+
+Old generation
+
+Poor disk speed
+
+Then recommend new devices (example: Dell OptiPlex, Mac Mini, Lenovo ThinkPad).
+
+⚡ PART B — Parallel Needs Analysis
+
+You must explain parallel computing in simple language for non-technical clinic managers.
+
+Explain:
+
+What is parallel computing?
+
+Why does it matter?
+
+Where does the clinic need it? (Radiology for image processing, data servers, appointment systems)
+
+Show examples:
+
+Shared memory vs distributed
+
+GPU vs CPU
+
+Threading vs multiprocessing
+
+Talk about limitations:
+
+Synchronisation overhead
+
+Not all tasks can be parallel
+
+Costs of GPUs
+
+Scalability problems
+
+Compare frameworks:
+
+CUDA (GPU)
+
+OpenMP
+
+MPI
+
+Multithreading frameworks
+
+Translate to business benefits:
+
+Faster processing → quicker patient service
+
+Better radiology speed → quicker diagnosis
+
+Lower waiting time
+
+More efficient systems
+
+⚡ PART C — Network Design (Cisco Packet Tracer)
+
+You must design a full clinic network for:
+
+Emergency
+
+Outpatient
+
+Radiology
+
+Administration
+
+What to include:
+
+4 separate VLANs (one per department)
+
+Router + Switches
+
+Wireless access points
+
+DHCP
+
+DNS
+
+Firewall rules
+
+VLAN security
+
+Backup server
+
+Internet connection
+
+Your diagram should have:
+
+1 core router
+
+Multiple switches
+
+PCs for each department
+
+Servers (File, Radiology Imaging, Patient records, etc.)
+
+Firewall
+
+Cloud → Internet
+
+Focus on:
+
+Reliability
+
+Scalability
+
+Security
+
+High-speed transfer (Radiology needs this)
+
+You will export screenshots from Packet Tracer and include them in your PDF.
+
+⚡ PART D — Budget Estimation
+
+You create a full budget table.
+
+Step 1 — List items:
+
+PCs
+
+Servers
+
+Switches
+
+Routers
+
+Cables
+
+Access points
+
+Software licenses
+
+Backups
+
+Cloud storage
+
+Step 2 — Research real prices
+
+Use UK prices from:
+
+Amazon
+
+Scan.co.uk
+
+Currys
+
+Dell
+
+Lenovo
+
+Step 3 — Include:
+
+Total cost
+
+Cost-saving strategy
+
+Contingency budget (backup plan if money is cut)
+
+Example:
+
+“Plan A: £25,000”
+
+“Plan B (reduced): £17,000”
+
+⚡ FINAL REPORT (PDF)
+
+Format must be:
+
+A4
+
+Arial 11
+
+2 cm margins
+
+Single spacing
+
+Max 8 pages
+
+IEEE referencing
+
+Cover page with names, IDs, group name
+
+Report structure:
+
+Cover page
+
+Introduction
+
+Part A
+
+Part B
+
+Part C
+
+Part D
+
+Conclusion
+
+References
+
+⚡ FINAL PRESENTATION
+
+15–20 minutes total
+10 minutes Q&A
+
+Every team member must speak.
+
+Recommended content:
+
+Part A graphs
+
+Part B visuals (simple)
+
+Network diagram
+
+Budget summary
+
+Clear speaking + simple explanation

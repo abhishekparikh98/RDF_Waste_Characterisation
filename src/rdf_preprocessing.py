@@ -178,7 +178,7 @@ class RDFPreprocessingPipeline:
         categorical_pipeline = Pipeline(
             steps=[
                 ("imputer", SimpleImputer(strategy="most_frequent")),
-                ("encoder", OneHotEncoder(handle_unknown="ignore", sparse=False)),
+                ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
             ]
         )
         numeric_pipeline = Pipeline(

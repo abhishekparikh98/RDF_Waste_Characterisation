@@ -108,7 +108,10 @@ class ImageClassifier:
 
     def __init__(self, config: ImageModelConfig):
         self.config = config
-        self.model = keras.models.load_model(str(config.model_path))
+        self.model = keras.models.load_model(
+            str(config.model_path),
+            custom_objects={"BaselineCNN": keras.Sequential},
+        )
         self.preprocess_fn = self._resolve_preprocess_fn(config.preprocess_mode)
 
     def _resolve_preprocess_fn(self, mode: str) -> Callable[[np.ndarray], np.ndarray]:
