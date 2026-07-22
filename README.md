@@ -20,7 +20,6 @@ msc-project/
 │   ├── preprocessing/       # Data preprocessing pipelines
 │   ├── utils/               # Utility functions
 │   └── evaluation/          # Evaluation metrics and scripts
-├── notebooks/               # Jupyter notebooks for exploration and analysis
 ├── data/
 │   ├── raw/                 # Original TrashNet and TACO datasets
 │   └── processed/           # Cleaned and preprocessed datasets
@@ -49,7 +48,7 @@ msc-project/
 ## Requirements
 
 - Python 3.9+
-- See `requirements.txt` for all dependencies
+- `requirements.txt` for all dependencies
 
 ## Installation
 
@@ -89,26 +88,17 @@ It accepts a waste image upload and displays the predicted waste class, confiden
 - **Phase 3**: Evaluation and optimization
 - **Phase 4**: Results analysis and reporting
 
-## Contributing Guidelines
 
-This is an academic dissertation project. For any modifications or extensions, please consult with the project supervisor.
 
-## License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
 
 ## Author
 
-**Student**: [Your Name]  
-**Institution**: [Your University]  
-**Supervisor**: [Supervisor Name]  
+**Student**: [Abhishek Parikh]  
+**Institution**: [Roehampton University]    
 **Year**: 2026
 
 ## References
 
-- TrashNet Dataset: [Reference]
-- TACO Dataset: [Reference]
+- TrashNet Dataset
+- TACO Dataset
 
----
-
-**Status**: Project Initialized | **Last Updated**: June 2026
