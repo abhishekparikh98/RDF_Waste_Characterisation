@@ -3,63 +3,376 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Waste RDF Analytics</title>
+  <title>Waste RDF Analytics &mdash; Academic Prototype</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <main class="page">
+
+    {# ===================================================================== #}
+    {# Hero / Title                                                          #}
+    {# ===================================================================== #}
     <section class="hero">
-      <p class="eyebrow">Academic Prototype</p>
-      <h1>Waste Image Classification and RDF Suitability</h1>
-      <p class="subtitle">Upload a waste image to predict its class and estimate RDF suitability.</p>
+      <p class="eyebrow">MSc Dissertation Prototype</p>
+      <h1>Waste Characterisation for Refuse-Derived Fuel Production</h1>
+      <p class="subtitle">
+        Upload a waste image. A convolutional neural network classifies the
+        material, a Random Forest estimates Refuse-Derived Fuel suitability,
+        and Grad-CAM shows which pixels drove the decision.
+      </p>
     </section>
 
-    <section class="card">
-      <h2>Upload Waste Image</h2>
-      <form method="post" enctype="multipart/form-data" class="upload-form">
-        <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Analyse Image</button>
-      </form>
+    {# ===================================================================== #}
+    {# Upload card                                                           #}
+    {# ===================================================================== #}
+    <section class="upload-card">
+      <div class="upload-zone">
+        <div class="upload-icon" aria-hidden="true">&#x21EA;</div>
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+          <input type="file" name="image" accept="image/*" required aria-label="Upload waste image">
+          <button type="submit" class="btn-primary">Analyse Image</button>
+        </form>
+        <p class="upload-help">Accepted formats: JPG, PNG, BMP, GIF, TIFF &middot; Maximum size 16 MB.</p>
+      </div>
 
       {% if error %}
-      <div class="alert alert-error">{{ error }}</div>
+      <div class="alert alert-error" role="alert">{{ error }}</div>
       {% endif %}
     </section>
 
-    {% if preview or result %}
-    <section class="grid">
+    {% if result %}
+
+    {# ===================================================================== #}
+    {# Pipeline diagram (horizontal)                                         #}
+    {# ===================================================================== #}
+    <section class="card">
+      <h2>
+        <span class="h2-icon" aria-hidden="true">&#x2192;</span>
+        Inference Pipeline
+      </h2>
+      <p class="muted">
+        Five-stage flow from uploaded image to RDF recommendation. No stage
+        alters the upstream prediction; all numbers are derived from the
+        trained models and the project knowledge base.
+      </p>
+      <div class="pipeline-row">
+        {% for step in pipeline_flow %}
+        <div class="pipeline-step">
+          <div class="ps-icon">{{ loop.index }}</div>
+          <div class="ps-label">{{ step.label }}</div>
+          <div class="ps-desc">{{ step.description }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# ===================================================================== #}
+    {# Row 1: Image preview + Prediction summary                             #}
+    {# ===================================================================== #}
+    <div class="results-grid">
       {% if preview %}
-      <article class="card">
-        <h2>Uploaded Image</h2>
-        <img src="{{ preview }}" alt="Uploaded waste image" class="preview">
+      <article class="card col-4 preview-card">
+        <h2>
+          <span class="h2-icon" aria-hidden="true">&#x1F4F7;</span>
+          Uploaded Image
+        </h2>
+        <img src="{{ preview }}" alt="Uploaded waste image">
       </article>
       {% endif %}
 
-      {% if result %}
-      <article class="card">
-        <h2>Prediction Summary</h2>
-        <dl class="metrics">
-          <div>
-            <dt>Predicted Waste Class</dt>
-            <dd>{{ result.predicted_class }}</dd>
-          </div>
-          <div>
-            <dt>Confidence Score</dt>
-            <dd>{{ "%.2f"|format(result.class_confidence * 100) }}%</dd>
-          </div>
-          <div>
-            <dt>RDF Suitability</dt>
-            <dd>{{ result.rdf_label }}</dd>
-          </div>
-          <div>
-            <dt>RDF Probability</dt>
-            <dd>{{ "%.2f"|format(result.rdf_probability * 100) }}%</dd>
-          </div>
-        </dl>
+      <article class="card col-4 primary-card">
+        <p class="pc-label">Predicted Waste Class</p>
+        <p class="pc-value">{{ result.predicted_class|capitalize }}</p>
+        <p class="pc-sub">
+          From the softmax output of the trained CNN baseline.
+        </p>
       </article>
+
+      <article class="card col-4 primary-card">
+        <p class="pc-label">RDF Suitability</p>
+        <p class="pc-value">
+          {% if result.rdf_label == 'Suitable' %}
+            Suitable
+          {% else %}
+            Not Suitable
+          {% endif %}
+        </p>
+        <p class="pc-sub">
+          Random Forest verdict &middot;
+          {{ "%.2f"|format(result.rdf_probability * 100) }}% confidence
+        </p>
+      </article>
+    </div>
+
+    {# ===================================================================== #}
+    {# Row 2: Confidence + Top-K probabilities                               #}
+    {# ===================================================================== #}
+    <div class="results-grid">
+      <article class="card col-4">
+        <h2>
+          <span class="h2-icon" aria-hidden="true">&#x1F4CA;</span>
+          Classification Confidence
+        </h2>
+        <div class="confidence-block">
+          <div class="confidence-value">{{ "%.1f"|format(result.class_confidence * 100) }}%</div>
+          <div class="confidence-meta">
+            {% set tone = result.confidence_label.tone %}
+            <span class="badge badge-{{ tone }}">
+              <span class="badge-dot"></span>
+              {{ result.confidence_label.level }} confidence
+            </span>
+            <span class="muted">
+              on a scale of 0&ndash;100%
+            </span>
+          </div>
+          <div class="progress-track" aria-label="Confidence progress">
+            {% set pct = result.class_confidence * 100 %}
+            <div class="progress-fill {{ result.confidence_label.tone }}"
+                 style="width: {{ pct }}%"></div>
+          </div>
+          <p class="muted">{{ result.confidence_label.description }}</p>
+        </div>
+      </article>
+
+      <article class="card col-8">
+        <h2>
+          <span class="h2-icon" aria-hidden="true">&#x2630;</span>
+          Top Class Probabilities
+        </h2>
+        <p class="muted">
+          Softmax distribution over the six TrashNet classes (descending).
+        </p>
+        <ul class="prob-list">
+          {% for label, percent in result.top_k_probabilities %}
+          <li class="prob-row">
+            <span class="prob-label">{{ label }}</span>
+            <span class="prob-bar">
+              <span class="prob-fill" style="width: {{ percent }}%"></span>
+            </span>
+            <span class="prob-percent">{{ "%.2f"|format(percent) }}%</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </article>
+    </div>
+
+    {# ===================================================================== #}
+    {# Row 3: AI explanation                                                  #}
+    {# ===================================================================== #}
+    <article class="card">
+      <h2>
+        <span class="h2-icon" aria-hidden="true">&#x1F9E0;</span>
+        AI Explanation
+      </h2>
+      <p class="muted">
+        Natural-language interpretation composed from the predicted class, the
+        model confidence, the material features, and the Grad-CAM focus
+        region. Not a large language model &mdash; every value is grounded in
+        the project source.
+      </p>
+
+      <div class="explanation-block">
+        <strong>Why this prediction?</strong><br>
+        {{ result.class_explanation }}
+      </div>
+
+      <div class="explanation-block">
+        <strong>RDF suitability verdict.</strong><br>
+        {{ result.rdf_explanation_text }}
+      </div>
+
+      <div class="card-section">
+        <h3>Visual characteristics the model attended to</h3>
+        <ul class="trait-list">
+          {% for trait in result.visual_traits %}
+          <li class="trait-chip">&#x2022; {{ trait }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="card-section">
+        <h3>Environmental note</h3>
+        <div class="explanation-block">{{ result.environmental_explanation }}</div>
+      </div>
+
+      <div class="card-section">
+        <h3>Recommended disposal</h3>
+        <div class="explanation-block">{{ result.recommendation_explanation }}</div>
+      </div>
+    </article>
+
+    {# ===================================================================== #}
+    {# Row 4: Grad-CAM (interpretability)                                    #}
+    {# ===================================================================== #}
+    <article class="card">
+      <h2>
+        <span class="h2-icon" aria-hidden="true">&#x1F525;</span>
+        Grad-CAM Visual Explanation
+      </h2>
+      <p class="muted">
+        Heatmap of the convolutional activations that drove the predicted
+        class. Warmer colours indicate regions that contributed most to the
+        decision.
+      </p>
+
+      {% if result.gradcam_overlay %}
+      <div class="gradcam-grid">
+        <div class="gc-frame">
+          <img src="{{ preview }}" alt="Original uploaded image">
+          <div class="gc-caption">Original image</div>
+        </div>
+        <div class="gc-frame">
+          <img src="{{ result.gradcam_overlay }}" alt="Grad-CAM overlay">
+          <div class="gc-caption">
+            Grad-CAM overlay &middot;
+            focus ratio {{ "%.1f"|format(result.gradcam_focus_ratio * 100) }}%
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="gradcam-missing">
+        Grad-CAM overlay is not available for this prediction. The
+        interpretability layer is best-effort and is skipped silently when
+        the model has no convolutional stage or when the heatmap cannot be
+        generated.
+      </div>
       {% endif %}
-    </section>
+    </article>
+
+    {# ===================================================================== #}
+    {# Row 5: Material features + Recommendation                             #}
+    {# ===================================================================== #}
+    <div class="results-grid">
+      <article class="card col-6">
+        <h2>
+          <span class="h2-icon" aria-hidden="true">&#x2697;</span>
+          Material Properties
+        </h2>
+        <p class="muted">
+          Material feature vector used by the Random Forest for the predicted
+          class.
+        </p>
+        <div class="kv-list">
+          <div class="kv-item">
+            <span class="kv-label">Material type</span>
+            <span class="kv-value">{{ result.material_features.material_type }}</span>
+          </div>
+          <div class="kv-item">
+            <span class="kv-label">Moisture (%)</span>
+            <span class="kv-value">{{ "%.1f"|format(result.material_features.moisture_content) }}</span>
+          </div>
+          <div class="kv-item">
+            <span class="kv-label">Contamination (0&ndash;10)</span>
+            <span class="kv-value">{{ "%.1f"|format(result.material_features.contamination_level) }}</span>
+          </div>
+          <div class="kv-item">
+            <span class="kv-label">Combustibility (0&ndash;10)</span>
+            <span class="kv-value">{{ "%.1f"|format(result.material_features.combustibility) }}</span>
+          </div>
+          <div class="kv-item">
+            <span class="kv-label">Calorific value (MJ/kg)</span>
+            <span class="kv-value">{{ "%.1f"|format(result.material_features.calorific_value) }}</span>
+          </div>
+        </div>
+
+        <div class="card-section">
+          <h3>Knowledge-base details</h3>
+          <ul class="bullet-list">
+            <li><strong>Category:</strong> {{ result.waste_info.category }}</li>
+            <li><strong>Typical properties:</strong> {{ result.waste_info.typical_properties }}</li>
+            <li><strong>Recyclability:</strong> {{ result.waste_info.recyclability }}</li>
+            <li><strong>Combustibility:</strong> {{ result.waste_info.combustibility }}</li>
+            <li>
+              <strong>Energy potential:</strong>
+              {{ result.waste_info.energy_potential_qualitative }}
+              ({{ result.waste_info.energy_potential_range_mj_per_kg[0] }}&ndash;{{ result.waste_info.energy_potential_range_mj_per_kg[1] }} MJ/kg)
+            </li>
+            <li><strong>Common uses:</strong> {{ result.waste_info.common_uses }}</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card col-6">
+        <h2>
+          <span class="h2-icon" aria-hidden="true">&#x267B;</span>
+          Recommendation
+        </h2>
+        <p class="muted">
+          Disposal route suggested for the predicted class. This is a static
+          domain-knowledge lookup, not a model output.
+        </p>
+        <span class="recommendation-pill">{{ result.recommendation }}</span>
+
+        <div class="card-section">
+          <h3>Environmental action</h3>
+          <span class="env-action">{{ result.environmental_action }}</span>
+        </div>
+
+        <div class="card-section">
+          <h3>Limitations of this prototype</h3>
+          <ul class="bullet-list">
+            {% for item in limitations %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    {# ===================================================================== #}
+    {# Row 6: Collapsible technical details                                  #}
+    {# ===================================================================== #}
+    <details class="tech-details">
+      <summary>
+        <span class="h2-icon" aria-hidden="true">&#x1F527;</span>
+        Technical Details
+      </summary>
+      <div class="tech-body">
+        <div>
+          <h3>Models</h3>
+          <ul class="stack-list">
+            <li>{{ model_info.name }}</li>
+            <li>{{ model_info.image_model_file }}</li>
+            <li>{{ model_info.rdf_model_file }}</li>
+            <li>{{ model_info.rdf_estimator }}</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Training</h3>
+          <ul class="stack-list">
+            <li>Dataset: {{ model_info.dataset }}</li>
+            <li>Input size: {{ model_info.input_size }}</li>
+            <li>Classes: {{ model_info.class_names }}</li>
+            <li>Batch size: {{ model_info.batch_size }}</li>
+            <li>Epochs: {{ model_info.epochs }}</li>
+            <li>Optimizer: {{ model_info.optimizer }}</li>
+            <li>Loss: {{ model_info.loss_function }}</li>
+            <li>Preprocess: {{ model_info.preprocess_mode }}</li>
+            <li>Random seed: {{ model_info.random_seed }}</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Processing time</h3>
+          <ul class="stack-list">
+            <li>Preprocessing: {{ result.timings.preprocess_ms }} ms</li>
+            <li>CNN inference: {{ result.timings.cnn_ms }} ms</li>
+            <li>Random Forest: {{ result.timings.rf_ms }} ms</li>
+            <li>Feature mapping: {{ result.timings.mapping_ms }} ms</li>
+            <li><strong>Total: {{ result.timings.total_ms }} ms</strong></li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
     {% endif %}
+
+    <footer class="footer">
+      <p>
+        Waste RDF Analytics &middot; MSc Dissertation Prototype
+        &middot; Flask + TensorFlow + scikit-learn
+      </p>
+    </footer>
+
   </main>
 </body>
 </html>

@@ -7,7 +7,7 @@ Image -> Waste Classification -> Material Features -> RDF Suitability Prediction
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
@@ -55,6 +55,7 @@ class InferenceResult:
     rdf_suitability: int
     rdf_probability: float
     rdf_label: str
+    class_probabilities: Dict[str, float] = field(default_factory=dict)
 
 
 MATERIAL_FEATURE_LIBRARY: Dict[str, Dict[str, object]] = {
@@ -124,7 +125,10 @@ class ImageClassifier:
     def load_image(self, image_path: Path) -> np.ndarray:
         """Load and preprocess a single image for inference."""
         image = Image.open(image_path).convert("RGB")
-        image = image.resize(self.config.input_shape)
+        # BILINEAR matches the TensorFlow bilinear used by
+        # keras.preprocessing.image_dataset_from_directory during training,
+        # which keeps train/serve preprocessing numerically consistent.
+        image = image.resize(self.config.input_shape, Image.BILINEAR)
         array = np.asarray(image, dtype=np.float32)
         array = np.expand_dims(array, axis=0)
         return self.preprocess_fn(array)
@@ -184,9 +188,16 @@ class MultimodalInferencePipeline:
     def infer(self, image_path: str | Path) -> InferenceResult:
         """Run the full multimodal inference workflow for one image."""
         image_path = Path(image_path)
-        predicted_class, confidence, _ = self.image_classifier.predict(image_path)
+        predicted_class, confidence, probabilities = self.image_classifier.predict(image_path)
         material_features = self.feature_mapper.build_features(predicted_class)
         rdf_label, rdf_probability = self.rdf_predictor.predict(material_features)
+
+        # Map the softmax vector onto class names so the UI can rank the top-k
+        # without re-running the model. Existing fields are unchanged.
+        class_probabilities = {
+            name: float(probabilities[index])
+            for index, name in enumerate(self.image_classifier.config.class_names)
+        }
 
         return InferenceResult(
             image_path=str(image_path),
@@ -196,6 +207,7 @@ class MultimodalInferencePipeline:
             rdf_suitability=rdf_label,
             rdf_probability=rdf_probability,
             rdf_label="Suitable" if rdf_label == 1 else "Not Suitable",
+            class_probabilities=class_probabilities,
         )
 
     def infer_batch(self, image_paths: List[str | Path]) -> List[InferenceResult]:
