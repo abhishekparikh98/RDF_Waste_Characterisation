@@ -1,104 +1,318 @@
-# Multi-Modal Waste Characterisation for High-Quality Refuse-Derived Fuel Production Using Machine Learning
+# ♻️ Multi-Modal Waste Characterisation for High-Quality Refuse-Derived Fuel Production Using Machine Learning
 
-## Project Overview
+<p align="center">
 
-This repository contains the implementation of an MSc Computing dissertation project focused on developing machine learning models for multi-modal waste characterization. The goal is to improve the quality of Refuse-Derived Fuel (RDF) production through automated waste classification and characterization using combined computer vision and sensor data.
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Flask](https://img.shields.io/badge/Flask-Web%20Application-green)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-Deep%20Learning-orange)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine%20Learning-red)
+![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-purple)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Research Objectives
+</p>
 
-- Develop machine learning models capable of classifying waste materials from multiple modalities (images, sensor data)
-- Combine TrashNet and TACO datasets for comprehensive waste material characterization
-- Evaluate model performance on waste-to-RDF production pipeline optimization
-- Create interpretable models suitable for industrial deployment
+---
 
-## Project Structure
+## 📖 Overview
+
+This repository contains the implementation of my **MSc Computing Dissertation** at the **University of Roehampton**.
+
+The project presents **multi-modal waste characterisation system** that combines **Deep Learning** and **Machine Learning** techniques to classify mixed household waste and estimate its suitability for **Refuse-Derived Fuel (RDF)** production.
+
+The system analyses waste images using Convolutional Neural Networks (CNNs) and Transfer Learning models while integrating additional waste characteristics to improve prediction accuracy for RDF suitability.
+
+---
+
+# 🎯 Research Objectives
+
+- Develop waste classification system using machine learning.
+- Improve RDF quality through automated waste characterisation.
+- Compare CNN and Transfer Learning models.
+- Integrate image-based classification with additional waste characteristics.
+- Develop an easy-to-use Flask web application.
+- Evaluate the effectiveness of multiple machine learning approaches.
+
+---
+
+# 🚀 Features
+
+- ✅ Waste Image Classification
+- ✅ RDF Suitability Prediction
+- ✅ CNN Model
+- ✅ ResNet50 Transfer Learning
+- ✅ MobileNetV2 Transfer Learning
+- ✅ Random Forest Classification
+- ✅ Multi-modal Machine Learning
+- ✅ Flask Web Interface
+- ✅ Confidence Score Prediction
+- ✅ Grad-CAM Explainability
+
+---
+
+# 🏗️ Project Architecture
 
 ```
-msc-project/
-├── src/                      # Source code for models and utilities
-│   ├── models/              # ML model implementations
-│   ├── preprocessing/       # Data preprocessing pipelines
-│   ├── utils/               # Utility functions
-│   └── evaluation/          # Evaluation metrics and scripts
-├── data/
-│   ├── raw/                 # Original TrashNet and TACO datasets
-│   └── processed/           # Cleaned and preprocessed datasets
-├── models/                  # Trained model checkpoints and weights
-├── reports/                 # Generated analysis and figures
-│   └── figures/             # Plots, visualizations, diagrams
-├── results/                 # Experimental results and outputs
-├── docs/                    # Project documentation
-├── scripts/                 # Utility scripts for data processing, training
-├── requirements.txt         # Python dependencies
-├── .gitignore               # Git exclusion rules
-├── LICENSE                  # MIT License
-└── README.md               # This file
+Waste Image
+      │
+      ▼
+Image Preprocessing
+      │
+      ▼
+CNN / ResNet50 / MobileNetV2
+      │
+      ▼
+Feature Extraction
+      │
+      ▼
+Random Forest
+      │
+      ▼
+Multi-modal Fusion
+      │
+      ▼
+Waste Classification
+      │
+      ▼
+RDF Suitability Prediction
 ```
 
-## Dataset Information
+---
 
-### TrashNet
-- A dataset for waste material classification
-- Contains multiple waste categories for machine learning training
 
-### TACO
-- "Trash Annotations in Context" dataset
-- Provides contextual waste object detection and segmentation
+# 🧠 Machine Learning Models
 
-## Requirements
+The project evaluates multiple machine learning models.
 
-- Python 3.9+
-- `requirements.txt` for all dependencies
+| Model | Purpose |
+|--------|---------|
+| CNN | Baseline Image Classification |
+| MobileNetV2 | Lightweight Transfer Learning |
+| ResNet50 | Deep Transfer Learning |
+| Random Forest | RDF Suitability Classification |
+| Multi-modal Fusion | Combined Prediction |
 
-## Installation
+---
 
-1. Clone the repository:
+# 🗂 Dataset
+
+This project combines two publicly available datasets.
+
+## TrashNet
+
+- Household waste images
+- Multiple waste categories
+- Image classification dataset
+
+## TACO Dataset
+
+- Trash Annotations in Context
+- Real-world waste images
+- Object detection and segmentation
+
+---
+
+# 💻 Technology Stack
+
+| Technology | Purpose |
+|------------|---------|
+| Python | Programming Language |
+| Flask | Web Application |
+| TensorFlow | Deep Learning |
+| Scikit-learn | Machine Learning |
+| OpenCV | Image Processing |
+| NumPy | Numerical Computing |
+| Pandas | Data Analysis |
+| Matplotlib | Visualisation |
+| HTML/CSS | Frontend |
+
+---
+
+# ⚙️ Installation
+
+Clone the repository
+
 ```bash
-git clone <repository-url>
-cd msc-project
+git clone https://github.com/abhishekparikh98/RDF_Waste_Characterisation.git
 ```
 
-2. Create a virtual environment:
+Move into the project directory
+
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+cd RDF_Waste_Characterisation
 ```
 
-3. Install dependencies:
+Create a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+Activate the environment
+
+### Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## Usage
+---
 
-### Flask web app
+# ▶️ Running the Application
 
-Run the academic inference interface:
+Start the Flask application.
 
 ```bash
 python app.py
 ```
 
-It accepts a waste image upload and displays the predicted waste class, confidence score, and RDF suitability prediction.
+Open your browser and visit
 
-## Project Timeline
+```
+http://127.0.0.1:5000
+```
 
-- **Phase 1**: Data exploration and preprocessing
-- **Phase 2**: Model development and training
-- **Phase 3**: Evaluation and optimization
-- **Phase 4**: Results analysis and reporting
+---
+
+# 🖼️ Application Workflow
+
+1. Upload a waste image.
+2. The image is preprocessed.
+3. The selected AI model performs classification.
+4. The Random Forest model predicts RDF suitability.
+5. The system displays:
+
+- Predicted waste class
+- Confidence score
+- RDF suitability
+- Recommendation
+
+---
+
+# 📸 Screenshots
+
+## Home Page
+
+```
+docs/screenshots/home.png
+```
+
+---
+
+## Upload Interface
+
+```
+docs/screenshots/upload.png
+```
+
+---
+
+## Prediction Result
+
+```
+docs/screenshots/result.png
+```
+
+---
+
+## Model Performance
+
+```
+docs/screenshots/performance.png
+```
 
 
+# 📈 Experimental Results
 
+| Model | Status |
+|--------|--------|
+| CNN | ✅ Implemented |
+| MobileNetV2 | ✅ Implemented |
+| ResNet50 | ✅ Implemented |
+| Random Forest | ✅ Implemented |
+| Multi-modal Prediction | ✅ Implemented |
+| GradCAM | ✅ Implemented |
 
-## Author
+> **Note:** Final accuracy values will be included after completion of the dissertation experiments.
 
-**Student**: [Abhishek Parikh]  
-**Institution**: [Roehampton University]    
-**Year**: 2026
+---
 
-## References
+# 🔬 Research Contributions
+
+This project demonstrates:
+
+- waste characterisation using machine learning.
+- Transfer Learning for waste classification.
+- Multi-modal machine learning integration.
+- RDF quality prediction.
+- Practical deployment using Flask.
+
+---
+
+# 📌 Future Work
+
+- Vision Transformers (ViT)
+- Real-time webcam prediction
+- Mobile application
+- Cloud deployment
+- Industrial-scale RDF optimisation
+
+---
+
+# 📁 Pre-trained Models
+
+The trained model files (`.h5`) are **not included** in this repository because they exceed GitHub's file size limit.
+
+The repository contains:
+
+- Model architectures
+- Training scripts
+- Inference code
+- Data preprocessing pipeline
+
+The trained models can be regenerated using the provided training scripts.
+
+---
+
+# 👨‍🎓 Author
+
+**Abhishek Parikh**
+
+MSc Computing
+
+University of Roehampton
+
+United Kingdom
+
+Year: **2026**
+
+---
+
+# 📚 References
 
 - TrashNet Dataset
 - TACO Dataset
+- TensorFlow Documentation
+- Scikit-learn Documentation
+- Flask Documentation
 
+---
+
+
+
+# ⭐ Acknowledgements
+
+I would like to thank my dissertation supervisor and the University of Roehampton for their guidance and support throughout this research project.
+
+---
