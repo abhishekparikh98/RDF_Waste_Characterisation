@@ -202,35 +202,29 @@ http://127.0.0.1:5000
 
 # 📸 Screenshots
 
-## Home Page
+<h2>🏠 Homepage</h2>
 
-```
-docs/screenshots/home.png
-```
+<p align="center">
+  <img src="docs/homepage.png" width="900">
+</p>
 
----
+<h2>📤 Upload Interface</h2>
 
-## Upload Interface
+<p align="center">
+  <img src="docs/upload-interface.png" width="900">
+</p>
 
-```
-docs/screenshots/upload.png
-```
+<h2>📊 Prediction Result</h2>
 
----
+<p align="center">
+  <img src="docs/prediction-result.png" width="900">
+</p>
 
-## Prediction Result
+<h2>🔥 Grad-CAM Visualization</h2>
 
-```
-docs/screenshots/result.png
-```
-
----
-
-## Model Performance
-
-```
-docs/screenshots/performance.png
-```
+<p align="center">
+  <img src="docs/gradcam.png" width="900">
+</p>
 
 
 # 📈 Experimental Results
