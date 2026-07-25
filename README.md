@@ -200,32 +200,45 @@ http://127.0.0.1:5000
 
 ---
 
-# 📸 Screenshots
+## 📸 Screenshots
 
-<h2>🏠 Homepage</h2>
+## 🏠 Homepage
 
-<p align="center">
-  <img src="docs/homepage.png" width="900">
-</p>
-
-<h2>📤 Upload Interface</h2>
+The homepage allows users to upload waste images and select the trained model for prediction.
 
 <p align="center">
-  <img src="docs/upload-interface.png" width="900">
+  <img src="docs/homepage.png" width="900" alt="Homepage">
 </p>
 
-<h2>📊 Prediction Result</h2>
+---
+
+## 📤 Upload Interface
+
+The upload interface enables users to select an image and initiate waste classification.
 
 <p align="center">
-  <img src="docs/prediction-result.png" width="900">
+  <img src="docs/upload-interface.png" width="900" alt="Upload Interface">
 </p>
 
-<h2>🔥 Grad-CAM Visualization</h2>
+---
+
+## 📊 Prediction Result
+
+The prediction page displays the predicted waste class, confidence score, RDF suitability, and recommendation.
 
 <p align="center">
-  <img src="docs/gradcam.png" width="900">
+  <img src="docs/prediction-result.png" width="900" alt="Prediction Result">
 </p>
 
+---
+
+## 🔥 Grad-CAM Visualization
+
+Grad-CAM highlights the regions of the image that contributed most to the model's prediction, improving interpretability.
+
+<p align="center">
+  <img src="docs/gradcam.png" width="900" alt="Grad-CAM Visualization">
+</p>
 
 # 📈 Experimental Results
 
