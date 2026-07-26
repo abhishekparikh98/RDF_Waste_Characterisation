@@ -46,6 +46,7 @@ The system analyses waste images using Convolutional Neural Networks (CNNs) and 
 - ✅ Flask Web Interface
 - ✅ Confidence Score Prediction
 - ✅ Grad-CAM Explainability
+-    YOLOv8 Object Detection
 
 ---
 
@@ -90,6 +91,7 @@ The project evaluates multiple machine learning models.
 | ResNet50 | Deep Transfer Learning |
 | Random Forest | RDF Suitability Classification |
 | Multi-modal Fusion | Combined Prediction |
+
 
 ---
 
@@ -250,6 +252,7 @@ Grad-CAM highlights the regions of the image that contributed most to the model'
 | Random Forest | ✅ Implemented |
 | Multi-modal Prediction | ✅ Implemented |
 | GradCAM | ✅ Implemented |
+| YOLOv8 | Not Implemented |
 
 > **Note:** Final accuracy values will be included after completion of the dissertation experiments.
 
