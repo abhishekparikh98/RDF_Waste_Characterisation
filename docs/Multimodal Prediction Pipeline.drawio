@@ -4,7 +4,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <UserObject label="" mermaidData="{&#xa;  &quot;data&quot;: &quot;graph LR\n    A[Image] --&gt; B[CNN]\n    B --&gt; C[Predicted Waste Class]\n    C --&gt; D[Feature Mapping]\n    D --&gt; E[Random Forest]\n    E --&gt; F[RDF Suitability]\n    F --&gt; G[Recommendation]&quot;,&#xa;  &quot;config&quot;: null&#xa;}" id="uCPAXCDqLR1opPvifT-e-1">
+        <UserObject label="" mermaidData="{&#xa;  &quot;data&quot;: &quot;graph LR\n    A[Image] --&gt; B[CNN]\n    B --&gt; C[Predicted Waste Class]\n    C --&gt; D[Feature Mapping]\n    D --&gt; E[Random Forest]\n    E --&gt; F[RDF Suitability]\n    F --&gt; G[Material Properties &amp; Limitations]&quot;,&#xa;  &quot;config&quot;: null&#xa;}" id="uCPAXCDqLR1opPvifT-e-1">
           <mxCell connectable="0" parent="1" style="group;transparentBounds=1;editIcon=1;lockedGroup=0;groupPadding=10;labelBackgroundColor=none;fontColor=#182E3E;" vertex="1">
             <mxGeometry as="geometry" />
           </mxCell>
@@ -39,9 +39,9 @@
             <mxGeometry height="54" width="165" x="1035" y="30" as="geometry" />
           </mxCell>
         </UserObject>
-        <UserObject label="Recommendation" mermaidId="n:G" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Recommendation" id="uCPAXCDqLR1opPvifT-e-8">
+        <UserObject label="Material Properties &amp; Limitations" mermaidId="n:G" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Material Properties &amp; Limitations" id="uCPAXCDqLR1opPvifT-e-8">
           <mxCell parent="uCPAXCDqLR1opPvifT-e-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#B1DDF0;strokeColor=#BAC8D3;fontColor=#182E3E;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;labelBackgroundColor=none;" vertex="1">
-            <mxGeometry height="54" width="183" x="1250" y="30" as="geometry" />
+            <mxGeometry height="54" width="290" x="1250" y="30" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="" mermaidId="e:A-&gt;B#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;" mermaidBaseValue="" id="uCPAXCDqLR1opPvifT-e-9">

@@ -366,17 +366,45 @@ def get_environmental_action(waste_class: str) -> str:
     return "Dispose via general waste or local composting where appropriate"
 
 
-def compute_gradcam_focus_ratio(heatmap_intensities: List[float]) -> float:
+def compute_gradcam_focus_ratio(heatmap: object) -> float:
     """Compute the fraction of the heatmap above 0.5.
 
+    Accepts any of:
+    - a flat ``list[float]`` of normalised intensities ([0, 1])
+    - a 2D ``numpy.ndarray`` of intensities ([0, 1])
+    - a 2D ``PIL.Image`` (grayscale or RGB) — converted in-place
+
     Args:
-        heatmap_intensities: A flattened list of the heatmap values
-            (already in [0, 1]).
+        heatmap: Heatmap data in any of the above forms.
 
     Returns:
-        A float in [0, 1] representing the model's focus concentration.
+        A float in [0, 1] representing the model's focus concentration
+        — the proportion of pixels whose intensity exceeds 0.5.
     """
-    if not heatmap_intensities:
+    try:
+        # Case 1: PIL image
+        if hasattr(heatmap, "size") and hasattr(heatmap, "mode"):
+            if heatmap.mode != "L":
+                heatmap = heatmap.convert("L")
+            values = list(heatmap.getdata())
+        else:
+            # Case 2: numpy array
+            try:
+                import numpy as np  # local import to keep the module light
+                arr = np.asarray(heatmap, dtype="float32")
+                if arr.ndim == 3:  # drop the channel axis
+                    arr = arr[..., 0]
+                # Rescale from [0, 255] to [0, 1] if needed
+                if arr.max() > 1.0:
+                    arr = arr / 255.0
+                values = arr.flatten().tolist()
+            except Exception:
+                # Case 3: already a flat iterable of ints
+                values = list(heatmap)
+    except Exception:
         return 0.0
-    n_high = sum(1 for v in heatmap_intensities if v > 0.5)
-    return n_high / float(len(heatmap_intensities))
+
+    if not values:
+        return 0.0
+    n_high = sum(1 for v in values if v > 0.5)
+    return n_high / float(len(values))

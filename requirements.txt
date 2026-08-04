@@ -1,54 +1,122 @@
-# Core dependencies
+# =============================================================================
+# Waste Characterisation for RDF — Python dependencies
+# =============================================================================
+#
+# Quick install (recommended):
+#     python -m venv .venv
+#     .venv\Scripts\activate            # Windows (Git Bash: source .venv/Scripts/activate)
+#     pip install -r requirements.txt
+#
+# Minimal install (Flask app + YOLO + Random Forest only — what you need to run app.py):
+#     pip install numpy pandas scipy scikit-learn Flask Pillow opencv-python \
+#                 ultralytics torch torchvision tensorflow joblib tqdm requests pyyaml
+#
+# Notes:
+#   - TensorFlow + torch are large (~1 GB total). On a CPU-only machine this is fine.
+#   - ultralytics will pull PyTorch as a dependency on install.
+#   - Tested against Python 3.11 with pip 23+.
+#   - For Apple Silicon or CUDA-enabled GPUs, see the "GPU support" section below.
+# =============================================================================
+
+
+# ----- Core numerical / data -----
 numpy>=1.21.0
 pandas>=1.3.0
-scikit-learn>=1.0.0
 scipy>=1.7.0
+scikit-learn>=1.0.0      # RandomForestClassifier, train_test_split, GridSearchCV, ColumnTransformer
+
+# ----- Model serialization (used by src/multimodal_inference.py, src/detection_pipeline.py) -----
+joblib>=1.2.0           # save/load the trained sklearn Pipeline to .joblib
+
+# ----- Web framework -----
 Flask>=3.0.0
+Werkzeug>=3.0.0         # Flask dependency, pinned for clarity
+Jinja2>=3.0.0           # Flask dependency, pinned for clarity
 
-# Deep Learning frameworks
-torch>=1.10.0
-torchvision>=0.11.0
-tensorflow>=2.10.0
-keras>=2.10.0
+# ----- Deep learning -----
+# TensorFlow is used by the legacy CNN / MobileNetV2 / ResNet50 paths and Grad-CAM.
+tensorflow>=2.10.0,<2.16.0   # 2.15 is the last release that fully supports Python 3.11 and avoids the keras==tensorflow.keras split
+Keras>=2.10.0           # pulled in by tensorflow; pinned separately for legacy imports
 
-# Computer Vision
-opencv-python>=4.5.0
+# PyTorch is required by Ultralytics for YOLO. The CPU build is fine for training YOLOv8n on a small dataset.
+# If you want GPU acceleration, install the CUDA build manually first:
+#     pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+torch>=2.0.0
+torchvision>=0.15.0
+
+# ----- Object detection -----
+ultralytics>=8.0.0,<9.0.0    # YOLOv8 — pulls PyTorch as a dependency if not present
+
+# ----- Computer vision / image IO -----
+opencv-python>=4.5.0,<4.10.0   # cv2 — used by Grad-CAM (cv2.applyColorMap, cv2.addWeighted, cv2.COLORMAP_JET)
 Pillow>=9.0.0
 imageio>=2.9.0
 scikit-image>=0.19.0
 
-# Data processing
+# ----- Plotting -----
 matplotlib>=3.4.0
 seaborn>=0.11.0
 plotly>=5.0.0
 
-# Jupyter and notebooks
+# ----- Notebook / interactive -----
 jupyter>=1.0.0
 jupyterlab>=3.0.0
 notebook>=6.4.0
 ipython>=7.30.0
+ipdb>=0.13.0
 
-# Configuration and utilities
+# ----- Configuration / utilities -----
 python-dotenv>=0.19.0
 pyyaml>=6.0
 tqdm>=4.62.0
 pydantic>=1.9.0
+requests>=2.28.0        # used by scripts/convert_taco_to_yolo.py for TACO image download
 
-# Testing and code quality
+# ----- Testing -----
 pytest>=7.0.0
 pytest-cov>=3.0.0
+
+# ----- Code quality (optional; remove these if you don't use them) -----
 black>=22.0.0
 flake8>=4.0.0
 pylint>=2.12.0
 mypy>=0.930
 
-# Documentation
+# ----- Documentation (optional) -----
 sphinx>=4.5.0
 sphinx-rtd-theme>=1.0.0
 
-# Experiment tracking and reproducibility
+# ----- Experiment tracking (optional; nothing imports these by default) -----
 wandb>=0.12.0
 mlflow>=1.23.0
 
-# Development tools
-ipdb>=0.13.0
+
+# =============================================================================
+# GPU support (optional)
+# =============================================================================
+# For CUDA:
+#     pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# Then add  device="cuda"  to scripts/train_yolo.py and src/yolo_detector.py.
+#
+# For Apple Silicon (Metal):
+#     pip install torch torchvision   # the official pip wheel picks the MPS backend automatically.
+# Then add  device="mps"  to the same files.
+
+# =============================================================================
+# Tested versions (what I used to develop the project)
+# =============================================================================
+# python          3.11.9
+# pip             24.0
+# numpy           1.26.4
+# pandas          2.2.1
+# scikit-learn    1.4.1.post1
+# tensorflow      2.15.0
+# torch           2.2.2 (CPU)
+# ultralytics     8.4.112
+# opencv-python   4.9.0.80
+# Pillow          10.2.0
+# joblib          1.3.2
+# Flask           3.0.2
+# tqdm            4.66.2
+# pyyaml          6.0.1
+# requests        2.31.0

@@ -43,28 +43,44 @@
     {% if result %}
 
     {# ===================================================================== #}
-    {# Pipeline diagram (horizontal)                                         #}
+    {# Detected Objects (multi-object output)                                #}
     {# ===================================================================== #}
-    <section class="card">
+    <article class="card">
       <h2>
-        <span class="h2-icon" aria-hidden="true">&#x2192;</span>
-        Inference Pipeline
+        <span class="h2-icon" aria-hidden="true">&#x1F50E;</span>
+        Detected Objects
       </h2>
       <p class="muted">
-        Five-stage flow from uploaded image to RDF recommendation. No stage
-        alters the upstream prediction; all numbers are derived from the
-        trained models and the project knowledge base.
+        YOLOv8 detected <strong>{{ result.num_objects }}</strong> waste object(s)
+        in this image. Each detection is mapped to the RDF material features
+        and passed through the existing Random Forest predictor.
       </p>
-      <div class="pipeline-row">
-        {% for step in pipeline_flow %}
-        <div class="pipeline-step">
-          <div class="ps-icon">{{ loop.index }}</div>
-          <div class="ps-label">{{ step.label }}</div>
-          <div class="ps-desc">{{ step.description }}</div>
-        </div>
+      {% if result.detections %}
+      <ul class="detection-list">
+        {% for det in result.detections %}
+        <li class="detection-item">
+          <div class="detection-header">
+            <span class="detection-name">{{ det.class_name|capitalize }}</span>
+            <span class="badge badge-{{ 'good' if det.rdf_label == 'Suitable' else 'bad' }}">
+              <span class="badge-dot"></span>
+              {{ det.rdf_label }}
+            </span>
+          </div>
+          <div class="detection-meta">
+            <span>Confidence: {{ "%.1f"|format(det.confidence * 100) }}%</span>
+            <span>RDF probability: {{ "%.1f"|format(det.rdf_probability * 100) }}%</span>
+          </div>
+          <div class="detection-features">
+            <span>Moisture: {{ "%.1f"|format(det.material_features.moisture_content) }}%</span>
+            <span>Calorific: {{ "%.1f"|format(det.material_features.calorific_value) }} MJ/kg</span>
+          </div>
+        </li>
         {% endfor %}
-      </div>
-    </section>
+      </ul>
+      {% else %}
+      <p class="muted">No objects detected.</p>
+      {% endif %}
+    </article>
 
     {# ===================================================================== #}
     {# Row 1: Image preview + Prediction summary                             #}
@@ -194,11 +210,6 @@
         <h3>Environmental note</h3>
         <div class="explanation-block">{{ result.environmental_explanation }}</div>
       </div>
-
-      <div class="card-section">
-        <h3>Recommended disposal</h3>
-        <div class="explanation-block">{{ result.recommendation_explanation }}</div>
-      </div>
     </article>
 
     {# ===================================================================== #}
@@ -240,136 +251,64 @@
     </article>
 
     {# ===================================================================== #}
-    {# Row 5: Material features + Recommendation                             #}
+    {# Row 5: Material features + limitations (single column)                 #}
     {# ===================================================================== #}
-    <div class="results-grid">
-      <article class="card col-6">
-        <h2>
-          <span class="h2-icon" aria-hidden="true">&#x2697;</span>
-          Material Properties
-        </h2>
-        <p class="muted">
-          Material feature vector used by the Random Forest for the predicted
-          class.
-        </p>
-        <div class="kv-list">
-          <div class="kv-item">
-            <span class="kv-label">Material type</span>
-            <span class="kv-value">{{ result.material_features.material_type }}</span>
-          </div>
-          <div class="kv-item">
-            <span class="kv-label">Moisture (%)</span>
-            <span class="kv-value">{{ "%.1f"|format(result.material_features.moisture_content) }}</span>
-          </div>
-          <div class="kv-item">
-            <span class="kv-label">Contamination (0&ndash;10)</span>
-            <span class="kv-value">{{ "%.1f"|format(result.material_features.contamination_level) }}</span>
-          </div>
-          <div class="kv-item">
-            <span class="kv-label">Combustibility (0&ndash;10)</span>
-            <span class="kv-value">{{ "%.1f"|format(result.material_features.combustibility) }}</span>
-          </div>
-          <div class="kv-item">
-            <span class="kv-label">Calorific value (MJ/kg)</span>
-            <span class="kv-value">{{ "%.1f"|format(result.material_features.calorific_value) }}</span>
-          </div>
+    <article class="card">
+      <h2>
+        <span class="h2-icon" aria-hidden="true">&#x2697;</span>
+        Material Properties
+      </h2>
+      <p class="muted">
+        Material feature vector used by the Random Forest for the predicted
+        class.
+      </p>
+      <div class="kv-list">
+        <div class="kv-item">
+          <span class="kv-label">Material type</span>
+          <span class="kv-value">{{ result.material_features.material_type }}</span>
         </div>
-
-        <div class="card-section">
-          <h3>Knowledge-base details</h3>
-          <ul class="bullet-list">
-            <li><strong>Category:</strong> {{ result.waste_info.category }}</li>
-            <li><strong>Typical properties:</strong> {{ result.waste_info.typical_properties }}</li>
-            <li><strong>Recyclability:</strong> {{ result.waste_info.recyclability }}</li>
-            <li><strong>Combustibility:</strong> {{ result.waste_info.combustibility }}</li>
-            <li>
-              <strong>Energy potential:</strong>
-              {{ result.waste_info.energy_potential_qualitative }}
-              ({{ result.waste_info.energy_potential_range_mj_per_kg[0] }}&ndash;{{ result.waste_info.energy_potential_range_mj_per_kg[1] }} MJ/kg)
-            </li>
-            <li><strong>Common uses:</strong> {{ result.waste_info.common_uses }}</li>
-          </ul>
+        <div class="kv-item">
+          <span class="kv-label">Moisture (%)</span>
+          <span class="kv-value">{{ "%.1f"|format(result.material_features.moisture_content) }}</span>
         </div>
-      </article>
-
-      <article class="card col-6">
-        <h2>
-          <span class="h2-icon" aria-hidden="true">&#x267B;</span>
-          Recommendation
-        </h2>
-        <p class="muted">
-          Disposal route suggested for the predicted class. This is a static
-          domain-knowledge lookup, not a model output.
-        </p>
-        <span class="recommendation-pill">{{ result.recommendation }}</span>
-
-        <div class="card-section">
-          <h3>Environmental action</h3>
-          <span class="env-action">{{ result.environmental_action }}</span>
+        <div class="kv-item">
+          <span class="kv-label">Contamination (0&ndash;10)</span>
+          <span class="kv-value">{{ "%.1f"|format(result.material_features.contamination_level) }}</span>
         </div>
-
-        <div class="card-section">
-          <h3>Limitations of this prototype</h3>
-          <ul class="bullet-list">
-            {% for item in limitations %}
-            <li>{{ item }}</li>
-            {% endfor %}
-          </ul>
+        <div class="kv-item">
+          <span class="kv-label">Combustibility (0&ndash;10)</span>
+          <span class="kv-value">{{ "%.1f"|format(result.material_features.combustibility) }}</span>
         </div>
-      </article>
-    </div>
-
-    {# ===================================================================== #}
-    {# Row 6: Collapsible technical details                                  #}
-    {# ===================================================================== #}
-    <details class="tech-details">
-      <summary>
-        <span class="h2-icon" aria-hidden="true">&#x1F527;</span>
-        Technical Details
-      </summary>
-      <div class="tech-body">
-        <div>
-          <h3>Models</h3>
-          <ul class="stack-list">
-            <li>{{ model_info.name }}</li>
-            <li>{{ model_info.image_model_file }}</li>
-            <li>{{ model_info.rdf_model_file }}</li>
-            <li>{{ model_info.rdf_estimator }}</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Training</h3>
-          <ul class="stack-list">
-            <li>Dataset: {{ model_info.dataset }}</li>
-            <li>Input size: {{ model_info.input_size }}</li>
-            <li>Classes: {{ model_info.class_names }}</li>
-            <li>Batch size: {{ model_info.batch_size }}</li>
-            <li>Epochs: {{ model_info.epochs }}</li>
-            <li>Optimizer: {{ model_info.optimizer }}</li>
-            <li>Loss: {{ model_info.loss_function }}</li>
-            <li>Preprocess: {{ model_info.preprocess_mode }}</li>
-            <li>Random seed: {{ model_info.random_seed }}</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Processing time</h3>
-          <ul class="stack-list">
-            <li>Preprocessing: {{ result.timings.preprocess_ms }} ms</li>
-            <li>CNN inference: {{ result.timings.cnn_ms }} ms</li>
-            <li>Random Forest: {{ result.timings.rf_ms }} ms</li>
-            <li>Feature mapping: {{ result.timings.mapping_ms }} ms</li>
-            <li><strong>Total: {{ result.timings.total_ms }} ms</strong></li>
-          </ul>
+        <div class="kv-item">
+          <span class="kv-label">Calorific value (MJ/kg)</span>
+          <span class="kv-value">{{ "%.1f"|format(result.material_features.calorific_value) }}</span>
         </div>
       </div>
-    </details>
+
+      <div class="card-section">
+        <h3>Knowledge-base details</h3>
+        <ul class="bullet-list">
+          <li><strong>Category:</strong> {{ result.waste_info.category }}</li>
+          <li><strong>Typical properties:</strong> {{ result.waste_info.typical_properties }}</li>
+          <li><strong>Recyclability:</strong> {{ result.waste_info.recyclability }}</li>
+          <li><strong>Combustibility:</strong> {{ result.waste_info.combustibility }}</li>
+          <li>
+            <strong>Energy potential:</strong>
+            {{ result.waste_info.energy_potential_qualitative }}
+            ({{ result.waste_info.energy_potential_range_mj_per_kg[0] }}&ndash;{{ result.waste_info.energy_potential_range_mj_per_kg[1] }} MJ/kg)
+          </li>
+          <li><strong>Common uses:</strong> {{ result.waste_info.common_uses }}</li>
+        </ul>
+      </div>
+
+      
+    </article>
 
     {% endif %}
 
     <footer class="footer">
       <p>
         Waste RDF Analytics &middot; MSc Dissertation Prototype
-        &middot; Flask + TensorFlow + scikit-learn
       </p>
     </footer>
 
