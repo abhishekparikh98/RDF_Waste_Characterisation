@@ -137,6 +137,10 @@ data/taco_images/
 data/yolo/
 data/yolo_sample/
 data/processed/
+data/rdf_features/
+# Source datasets (download manually; see README)
+"TrashNET Data set/"
+"TACO-master/"
 # Trained / pretrained model weights (re-train or re-download)
 models/
 models/checkpoints/
@@ -145,13 +149,17 @@ models/checkpoints/
 *.onnx
 *.weights
 # Per-run training artefacts (PNGs); keep CSVs/YAMLs/summaries at results/ root
-results/**/*_curve.png
+*_curve.png
 results/**/train_batch*.jpg
 results/**/val_batch*.jpg
 results/**/labels.jpg
 results/**/labels_correlogram.jpg
-results/**/confusion_matrix*.png
+confusion_matrix*.png
 results/**/results.png
+*_comparison.png
+gradcam_*.png
+features_*.png
+training_history*.png
 results/experiments/
 .wandb/
 runs/

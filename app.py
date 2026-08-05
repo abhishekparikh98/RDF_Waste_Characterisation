@@ -42,6 +42,14 @@ PROJECT_ROOT = Path(__file__).parent
 UPLOAD_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tiff"}
 ALLOWED_MIME_PREFIXES = {"image/"}
 
+# Where to fetch the missing model weights on first run, if a GitHub Release
+# named "v1.0-models" has been published with these two files attached.
+WEIGHTS_RELEASE_TAG = os.environ.get("RDF_WEIGHTS_RELEASE_TAG", "v1.0-models")
+WEIGHTS_BASE_URL = (
+    f"https://github.com/abhishekparikh98/RDF_Waste_Characterisation/"
+    f"releases/download/{WEIGHTS_RELEASE_TAG}"
+)
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "rdf-waste-analytics")
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
@@ -69,12 +77,46 @@ def is_allowed_file(filename: str, content_type: str | None) -> bool:
     return any(content_type.startswith(prefix) for prefix in ALLOWED_MIME_PREFIXES)
 
 
+def ensure_model_weights(local_path: Path) -> None:
+    """Download `local_path` from the GitHub Release if it is missing.
+
+    On a fresh clone the model weights are gitignored, so without this step
+    `python app.py` crashes the first time the upload form is submitted. We
+    pull them from `WEIGHTS_BASE_URL` (Release tag `WEIGHTS_RELEASE_TAG`) the
+    first time they are needed. If the Release is not yet published — or the
+    network is unavailable — we raise a clear, actionable error instead of a
+    bare 404 from urllib.
+    """
+    if local_path.exists():
+        return
+    import urllib.request
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+    url = f"{WEIGHTS_BASE_URL}/{local_path.name}"
+    try:
+        with urllib.request.urlopen(url, timeout=30) as response, \
+                open(local_path, "wb") as out_file:
+            out_file.write(response.read())
+    except Exception as exc:
+        raise FileNotFoundError(
+            f"\n\nModel weight missing: {local_path}\n"
+            f"  Tried to download: {url}\n"
+            f"  Underlying error:  {exc}\n\n"
+            f"  Fix one of:\n"
+            f"    1. Publish a GitHub Release tagged '{WEIGHTS_RELEASE_TAG}' "
+            f"with {local_path.name} attached and restart.\n"
+            f"    2. Manually place {local_path.name} at {local_path}.\n"
+            f"    3. Train from scratch with scripts/train_yolo.py or "
+            f"scripts/train_cnn.py.\n"
+        ) from exc
+
+
 @lru_cache(maxsize=1)
 def get_pipeline() -> MultimodalInferencePipeline:
     """Create and cache the legacy CNN-based multimodal inference pipeline."""
     image_model_path = PROJECT_ROOT / "models" / "cnn_baseline_best.h5"
     rdf_model_path = PROJECT_ROOT / "models" / "rdf_random_forest_pipeline.joblib"
 
+    ensure_model_weights(image_model_path)
     if not image_model_path.exists():
         raise FileNotFoundError(f"Image model not found: {image_model_path}")
     if not rdf_model_path.exists():
@@ -95,6 +137,7 @@ def get_yolo_pipeline() -> DetectionPipeline:
     yolo_model_path = PROJECT_ROOT / "models" / "yolo_best.pt"
     rdf_model_path = PROJECT_ROOT / "models" / "rdf_random_forest_pipeline.joblib"
 
+    ensure_model_weights(yolo_model_path)
     if not yolo_model_path.exists():
         raise FileNotFoundError(
             f"YOLO model not found at {yolo_model_path}. Train one with "
