@@ -131,8 +131,27 @@ dmypy.json
 .DS_Store
 
 # Project-specific
+# Datasets and generated dataset artefacts (re-build via preprocessing scripts)
 data/raw/
+data/taco_images/
+data/yolo/
+data/yolo_sample/
+data/processed/
+# Trained / pretrained model weights (re-train or re-download)
+models/
 models/checkpoints/
+*.pt
+*.pth
+*.onnx
+*.weights
+# Per-run training artefacts (PNGs); keep CSVs/YAMLs/summaries at results/ root
+results/**/*_curve.png
+results/**/train_batch*.jpg
+results/**/val_batch*.jpg
+results/**/labels.jpg
+results/**/labels_correlogram.jpg
+results/**/confusion_matrix*.png
+results/**/results.png
 results/experiments/
 .wandb/
 runs/
@@ -143,3 +162,6 @@ mlruns/
 *.temp
 .tmp/
 *.h5
+*.bkp
+.*.swp
+docs/.*

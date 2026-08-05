@@ -1,0 +1,11 @@
+YOLOv8 training run: waste_yolov8n
+Started: 2026-07-30 19:21:03
+Data: d:\University\Msc Project\data\yolo\dataset.yaml
+Pretrained weights: yolov8n.pt
+Epochs: 50
+Image size: 640
+Batch size: 16
+Patience: 10
+Device: cpu
+Best checkpoint: d:\University\Msc Project\models\yolo_best.pt
+TensorBoard: disabled
