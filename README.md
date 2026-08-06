@@ -324,7 +324,6 @@ The repository also contains:
 - Geirhos, R. et al. (2020). *Shortcut learning in deep neural networks*. Nature Machine Intelligence 2(11), 665–673.
 - Pedregosa, F. et al. (2011). *Scikit-learn: Machine learning in Python*. JMLR 12, 2825–2830.
 
-A full APA-7 reference list is in the final dissertation (`FINAL_MSC_DISSERTATION.pdf`).
 
 ---
 
@@ -344,4 +343,4 @@ Year: **2026**
 
 ## ⭐ Acknowledgements
 
-I would like to thank my dissertation supervisor and the University of Roehampton for the guidance and support throughout this research project. The TrashNet, TACO, Ultralytics, TensorFlow, Keras, and Scikit-learn open-source communities made this work possible.
+I would like to thank my dissertation supervisor and the University of Roehampton for the guidance and support throughout this research project. The TrashNet, TensorFlow, Keras, and Scikit-learn open-source communities made this work possible.
