@@ -123,7 +123,7 @@ The 60-to-6 TACO category mapping is documented inline in the preprocessing scri
 | NumPy / Pandas | Numerical and tabular computing |
 | Matplotlib | All figures and plots |
 | python-docx | Dissertation assembly |
-| HTML / CSS | Frontend (Jinja2 template + academic dashboard CSS) |
+| HTML / CSS | Frontend |
 
 ---
 
